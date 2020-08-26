@@ -1,6 +1,6 @@
 grid_size = 9
 
-matrix = [
+sudoku_grid = [
     [0, 1, 0, 0, 8, 0, 0, 0, 0],
     [0, 9, 6, 2, 0, 7, 0, 0, 0],
     [0, 0, 8, 6, 0, 0, 5, 4, 0],
@@ -18,50 +18,57 @@ def print_sudoku():
     Simply print out the sudoku array.
     :return: Nothing.
     """
-    for i in matrix:
-        print (i)
+    for cell in sudoku_grid:
+        print(cell)
+
 
 #function to check if all cells are assigned or not
 #if there is any unassigned cell
 #then this function will change the values of
 #row and col accordingly
 def number_unassigned(row, col):
-    num_unassign = 0
+    """
+
+    :param row:
+    :param col:
+    :return:
+    """
+    blank_cell = 0
     for i in range(0, grid_size):
-        for j in range (0, grid_size):
-            #cell is unassigned
-            if matrix[i][j] == 0:
+        for j in range(0, grid_size):
+
+            if sudoku_grid[i][j] == 0:
                 row = i
                 col = j
-                num_unassign = 1
-                a = [row, col, num_unassign]
+                blank_cell = 1
+                a = [row, col, blank_cell]
                 return a
-    a = [-1, -1, num_unassign]
+    a = [-1, -1, blank_cell]
     return a
+
 #function to check if we can put a
 #value in a paticular cell or not
 def is_safe(n, r, c):
     #checking in row
     for i in range(0, grid_size):
         #there is a cell with same value
-        if matrix[r][i] == n:
+        if sudoku_grid[r][i] == n:
             return False
     #checking in column
     for i in range(0, grid_size):
         #there is a cell with same value
-        if matrix[i][c] == n:
+        if sudoku_grid[i][c] == n:
             return False
     row_start = (r//3)*3
     col_start = (c//3)*3;
     #checking submatrix
     for i in range(row_start,row_start+3):
         for j in range(col_start,col_start+3):
-            if matrix[i][j]==n:
+            if sudoku_grid[i][j]==n:
                 return False
     return True
 
-#function to check if we can put a
-#value in a paticular cell or not
+
 def solve_sudoku():
     row = 0
     col = 0
@@ -73,17 +80,17 @@ def solve_sudoku():
     row = a[0]
     col = a[1]
     #number between 1 to 9
-    for i in range(1,10):
+    for i in range(1, 10):
         #if we can assign i to the cell or not
         #the cell is matrix[row][col]
         if is_safe(i, row, col):
-            matrix[row][col] = i
+            sudoku_grid[row][col] = i
             #backtracking
             if solve_sudoku():
                 return True
             #f we can't proceed with this solution
             #reassign the cell
-            matrix[row][col]=0
+            sudoku_grid[row][col] = 0
     return False
 
 if solve_sudoku():
