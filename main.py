@@ -1,15 +1,16 @@
-grid_size = 9
+
+GRID_SIZE = 9
 
 sudoku_grid = [
-    [0, 1, 0, 0, 8, 0, 0, 0, 0],
-    [0, 9, 6, 2, 0, 7, 0, 0, 0],
-    [0, 0, 8, 6, 0, 0, 5, 4, 0],
-    [0, 0, 0, 0, 0, 0, 0, 8, 0],
-    [1, 0, 0, 7, 0, 5, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 1, 5, 7],
-    [0, 0, 3, 0, 6, 1, 0, 0, 0],
-    [0, 0, 0, 4, 0, 0, 7, 6, 3],
-    [0, 0, 0, 0, 7, 0, 4, 0, 0]
+    [4, 0, 0, 0, 5, 0, 8, 0, 0],
+    [0, 1, 8, 0, 0, 0, 7, 0, 0],
+    [0, 0, 3, 0, 0, 4, 0, 0, 0],
+    [9, 6, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 5, 0, 0, 3, 0, 0, 0],
+    [0, 7, 0, 0, 0, 8, 0, 6, 0],
+    [0, 0, 1, 6, 0, 0, 0, 0, 4],
+    [0, 0, 0, 5, 0, 0, 0, 1, 3],
+    [0, 0, 0, 8, 0, 0, 0, 0, 0]
     ]
 
 
@@ -22,76 +23,75 @@ def print_sudoku():
         print(cell)
 
 
-#function to check if all cells are assigned or not
-#if there is any unassigned cell
-#then this function will change the values of
-#row and col accordingly
-def number_unassigned(row, col):
+def cell_is_empty():
     """
-
-    :param row:
-    :param col:
-    :return:
+    Process grid cells that have not been solved.
+    :return: A list containing the cell details.
     """
-    blank_cell = 0
-    for i in range(0, grid_size):
-        for j in range(0, grid_size):
-
+    for i in range(0, GRID_SIZE):
+        for j in range(0, GRID_SIZE):
+            # If we have an empty cell...
             if sudoku_grid[i][j] == 0:
                 row = i
                 col = j
-                blank_cell = 1
-                a = [row, col, blank_cell]
-                return a
-    a = [-1, -1, blank_cell]
-    return a
+                return row, col, True
+    return -1, -1, False
 
-#function to check if we can put a
-#value in a paticular cell or not
-def is_safe(n, r, c):
-    #checking in row
-    for i in range(0, grid_size):
-        #there is a cell with same value
-        if sudoku_grid[r][i] == n:
+
+def number_already_exists(number, row, column):
+    """
+    Checks if a number already exists in a row, column or sub-grid.
+    :param number: The number to check for.
+    :param row: The row to check.
+    :param column: The column to check.
+    :return: True if the number is ok, False if the number already exists.
+    """
+
+    # Process the row, return false if the same number already exists.
+    for i in range(0, GRID_SIZE):
+        if sudoku_grid[row][i] == number:
             return False
-    #checking in column
-    for i in range(0, grid_size):
-        #there is a cell with same value
-        if sudoku_grid[i][c] == n:
+
+    # Process the column, return false if the same number already exists.
+    for i in range(0, GRID_SIZE):
+        if sudoku_grid[i][column] == number:
             return False
-    row_start = (r//3)*3
-    col_start = (c//3)*3;
-    #checking submatrix
-    for i in range(row_start,row_start+3):
-        for j in range(col_start,col_start+3):
-            if sudoku_grid[i][j]==n:
+    row_start = (row // 3) * 3
+    col_start = (column // 3) * 3
+
+    # Process the sub-grid, return false if the same number already exists.
+    for i in range(row_start, row_start+3):
+        for j in range(col_start, col_start+3):
+            if sudoku_grid[i][j] == number:
                 return False
     return True
 
 
 def solve_sudoku():
-    row = 0
-    col = 0
-    #if all cells are assigned then the sudoku is already solved
-    #pass by reference because number_unassigned will change the values of row and col
-    a = number_unassigned(row, col)
-    if a[2] == 0:
+    """
+    The top level function for solving the sudoku puzzle.
+    :return: True if solved, False otherwise.
+    """
+    # Check the current state of the sudoku grid.
+    # Return false when an empty cell is found.
+    row, col, cell_status = cell_is_empty()
+
+    if not cell_status:
         return True
-    row = a[0]
-    col = a[1]
-    #number between 1 to 9
+
     for i in range(1, 10):
-        #if we can assign i to the cell or not
-        #the cell is matrix[row][col]
-        if is_safe(i, row, col):
+        # Check if we can assign the current number.
+        if number_already_exists(i, row, col):
             sudoku_grid[row][col] = i
-            #backtracking
+
+            # Move back and try again if the number doesn't fit.
             if solve_sudoku():
                 return True
-            #f we can't proceed with this solution
-            #reassign the cell
+
+            # In this case, the number does not fit, try again.
             sudoku_grid[row][col] = 0
     return False
+
 
 if solve_sudoku():
     print_sudoku()
