@@ -12,14 +12,6 @@ sudoku_grid = [
 
 GRID_SIZE = 9
 
-def print_sudoku():
-    """
-    Simply print out the sudoku array.
-    :return: Nothing.
-    """
-    for cell in sudoku_grid:
-        print(cell)
-
 
 def cell_is_empty():
     """
@@ -92,6 +84,7 @@ def solve_sudoku():
 
 
 if solve_sudoku():
-    print_sudoku()
+    for cell in sudoku_grid:
+        print(cell)
 else:
     print("No solution found")
