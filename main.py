@@ -1,6 +1,3 @@
-
-GRID_SIZE = 9
-
 sudoku_grid = [
     [4, 0, 0, 0, 5, 0, 8, 0, 0],
     [0, 1, 8, 0, 0, 0, 7, 0, 0],
@@ -13,6 +10,7 @@ sudoku_grid = [
     [0, 0, 0, 8, 0, 0, 0, 0, 0]
     ]
 
+GRID_SIZE = 9
 
 def print_sudoku():
     """
