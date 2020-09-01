@@ -1,3 +1,5 @@
+import json
+
 sudoku_grid = [
     [4, 0, 0, 0, 5, 0, 8, 0, 0],
     [0, 1, 8, 0, 0, 0, 7, 0, 0],
@@ -11,6 +13,9 @@ sudoku_grid = [
     ]
 
 GRID_SIZE = 9
+
+with open('./grid.json', 'w') as f:
+    json.dump(sudoku_grid, f)
 
 
 def cell_is_empty():
@@ -40,12 +45,12 @@ def number_already_exists(number, row, column):
     # Process the row, return false if the same number already exists.
     for i in range(0, GRID_SIZE):
         if sudoku_grid[row][i] == number:
-            return False
+            return True
 
     # Process the column, return false if the same number already exists.
     for i in range(0, GRID_SIZE):
         if sudoku_grid[i][column] == number:
-            return False
+            return True
     row_start = (row // 3) * 3
     col_start = (column // 3) * 3
 
@@ -53,8 +58,8 @@ def number_already_exists(number, row, column):
     for i in range(row_start, row_start+3):
         for j in range(col_start, col_start+3):
             if sudoku_grid[i][j] == number:
-                return False
-    return True
+                return True
+    return False
 
 
 def solve_sudoku():
@@ -71,7 +76,7 @@ def solve_sudoku():
 
     for i in range(1, 10):
         # Check if we can assign the current number.
-        if number_already_exists(i, row, col):
+        if not number_already_exists(i, row, col):
             sudoku_grid[row][col] = i
 
             # Move back and try again if the number doesn't fit.
@@ -87,4 +92,4 @@ if solve_sudoku():
     for cell in sudoku_grid:
         print(cell)
 else:
-    print("No solution found")
+    print("No solution found.")
