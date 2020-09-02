@@ -12,7 +12,7 @@ sudoku_grid = [
     [0, 0, 0, 8, 0, 0, 0, 0, 0]
     ]
 
-GRID_SIZE = 9
+GRID_SIZE = len(sudoku_grid)
 
 with open('./grid.json', 'w') as f:
     json.dump(sudoku_grid, f)
@@ -33,33 +33,34 @@ def cell_is_empty():
     return -1, -1, False
 
 
-def number_already_exists(number, row, column):
+def number_doesnt_yet_exist(number, row, col):
     """
-    Checks if a number already exists in a row, column or sub-grid.
+    Checks if a number does not yet exist in a row, column or sub-grid.
     :param number: The number to check for.
     :param row: The row to check.
-    :param column: The column to check.
-    :return: True if the number is ok, False if the number already exists.
+    :param col: The column to check.
+    :return: True if the number is ok, False if the number does not yet exist.
     """
 
-    # Process the row, return false if the same number already exists.
+    # 1. Process the row and column, return false if the number doesn't yet exist.
+    # 2. Process the sub-grid, return false if the number doesn't yet exist.
     for i in range(0, GRID_SIZE):
-        if sudoku_grid[row][i] == number:
-            return True
-
-    # Process the column, return false if the same number already exists.
-    for i in range(0, GRID_SIZE):
-        if sudoku_grid[i][column] == number:
-            return True
+        if sudoku_grid[row][i] == number or sudoku_grid[i][col] == number:
+            return False
     row_start = (row // 3) * 3
-    col_start = (column // 3) * 3
+    col_start = (col // 3) * 3  
+    for i in range(row_start, row_start+3): # To do: There is redundant verification here, five locals yet verified on row and column verifications.
+        for j in range(col_start, col_start+3):
+            if sudoku_grid[i][j] == number:
+                return False
+    return True
 
     # Process the sub-grid, return false if the same number already exists.
     for i in range(row_start, row_start+3):
         for j in range(col_start, col_start+3):
             if sudoku_grid[i][j] == number:
-                return True
-    return False
+                return False
+    return True
 
 
 def solve_sudoku():
@@ -76,7 +77,7 @@ def solve_sudoku():
 
     for i in range(1, 10):
         # Check if we can assign the current number.
-        if not number_already_exists(i, row, col):
+        if number_doesnt_yet_exist(i, row, col):
             sudoku_grid[row][col] = i
 
             # Move back and try again if the number doesn't fit.
